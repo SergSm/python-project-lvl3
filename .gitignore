@@ -1,0 +1,13 @@
+./git
+.idea/
+__pycache__/
+.venv/
+dist/
+.pyc
+hexlet_code.egg-info/
+.coverage
+coverage.xml
+
+.DS_Store
+
+debug_main_function.py
