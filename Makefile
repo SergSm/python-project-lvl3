@@ -14,7 +14,7 @@ build:
 	poetry build
 
 run:
-	poetry run page-loader
+	poetry run page-loader 'sergsm.github.io'
 
 test:
 	poetry run pytest --junit-xml=./tests/coverage.xml
