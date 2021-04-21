@@ -2,7 +2,7 @@ from page_loader.main import download
 from page_loader.cli import get_arguments
 
 
-def download():
+def main():
 
     args = get_arguments()
-    print(download(args.save_to))
+    print(download(args.output))

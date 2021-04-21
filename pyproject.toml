@@ -5,6 +5,10 @@ description = "Download a page from the Internet!"
 authors = ["SergSm <smirnovserg.s@gmail.com>"]
 license = "MIT"
 
+packages = [
+    {include = "page_loader"}
+]
+
 [tool.poetry.dependencies]
 python = "^3.9"
 
@@ -13,3 +17,6 @@ python = "^3.9"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+page-loader = "page_loader.scripts.page_loader:main"
