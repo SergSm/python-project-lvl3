@@ -12,6 +12,8 @@ def get_arguments():
         default=os.getcwd()
     )
 
+    parser.add_argument('url')
+
     args = parser.parse_args()
 
     return args
