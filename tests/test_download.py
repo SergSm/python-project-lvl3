@@ -2,9 +2,7 @@ import pytest
 import sys
 from tempfile import TemporaryDirectory
 from pathlib import Path
-from requests_mock import mocker
 
-#from page_loader.main import download
 from page_loader import download
 from page_loader.regexer import get_transformed_filename
 
@@ -33,19 +31,18 @@ def test_download_single_page():
             assert result == get_file(FIXTURE_DIR / filename)
 
 
-def test_download_single_page_request_mocked():
+def test_download_single_page_request_mocked(mocker):
     url = "https://sergsm.github.io/index.html"
 
     with TemporaryDirectory() as td:
 
         filepath = Path(td).resolve()
+        filename = get_transformed_filename(url)
 
-        mocker.patch('page_loader.main.download', return_value=1)
+        mocker.patch(url, text=get_file(FIXTURE_DIR / filename))
 
         download(url, filepath)
 
-        filename = get_transformed_filename(url)
         with open(filepath / filename, 'r') as f:
             result = f.read()
             assert result == get_file(FIXTURE_DIR / filename)
-
