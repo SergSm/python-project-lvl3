@@ -1,40 +1,19 @@
-import re
 import requests
-
 from pathlib import Path
 
-
-def get_transformed_filename(url):
-    url_no_scheme = str(url).split('//', 1)[-1]
-    #print(url_no_scheme)
-    url_no_scheme2 = url_no_scheme.split('/')
-    asfasfaSFf
-
-    info = url_no_scheme2.split('.')
-    print('info')
-    print(info)
-
-    name = ""
-    for bit in info:
-        name += f'-{bit}'
-        print(bit)
-
-    print('±±±')
-    print(name)
-    print('sdfdsfsd')
-    return name
+from page_loader.regexer import get_transformed_filename
 
 
 def download(url, output):
 
     response = requests.get(url, allow_redirects=False)
     data = response.content
+    filename = get_transformed_filename(url)
 
-    name = get_transformed_filename(url)
+    output = Path(output).resolve()
+    filepath = output / filename
 
-    return name
+    with open(filepath, 'wb') as f:
+        f.write(data)
 
-
-    # with open(output) as f:
-    #     f.write(data)
-
+    return filepath

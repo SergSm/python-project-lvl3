@@ -11,3 +11,5 @@ coverage.xml
 .DS_Store
 
 debug_main_function.py
+
+.html

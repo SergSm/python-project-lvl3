@@ -4,9 +4,8 @@ version = "0.1.0"
 description = "Download a page from the Internet!"
 authors = ["SergSm <smirnovserg.s@gmail.com>"]
 license = "MIT"
-
 packages = [
-    {include = "page_loader"}
+    {include = "page_loader"},
 ]
 
 [tool.poetry.dependencies]
@@ -15,6 +14,7 @@ requests = "^2.25.1"
 
 [tool.poetry.dev-dependencies]
 requests-mock = "^1.8.0"
+pytest = "^6.2.3"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -22,3 +22,10 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 page-loader = "page_loader.scripts.page_loader:main"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q"
+testpaths = [
+    "tests",
+]
