@@ -1,3 +1,5 @@
+# TODO raise error if the output dir doesn't exist
+
 import requests
 from pathlib import Path
 
