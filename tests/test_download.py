@@ -31,7 +31,7 @@ def test_download_single_page():
             assert result == get_file(FIXTURE_DIR / filename)
 
 
-def test_download_single_page_request_mocked(mocker):
+def test_download_single_page_request_mocked(requests_mock):
     url = "https://sergsm.github.io/index.html"
 
     with TemporaryDirectory() as td:
@@ -39,7 +39,7 @@ def test_download_single_page_request_mocked(mocker):
         filepath = Path(td).resolve()
         filename = get_transformed_filename(url)
 
-        mocker.patch(url, text=get_file(FIXTURE_DIR / filename))
+        requests_mock.get(url, text=get_file(FIXTURE_DIR / filename))
 
         download(url, filepath)
 
