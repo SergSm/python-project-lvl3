@@ -1,3 +1,4 @@
+import requests
 import logging as l
 
 from pathlib import Path
@@ -14,42 +15,44 @@ def get_assets_dirname(filename):
     return f'{filename}_files'
 
 
-def download(url, output=CURRENT_DIR):
+def alter_assets_pathes():
+    pass
+
+def extract_assets_info():
+    pass
+
+
+def download(url, output_dir=CURRENT_DIR):
 
     l.info(f"Destination url{url}")
+
+    # set up file names and dirctory pathes
+    output_dir = Path(output_dir).resolve()
 
     filename = get_transformed_filename(url)
     assets_dirname = get_assets_dirname(filename)
 
+    path_to_file = output_dir / filename
+    path_to_assets = output_dir / assets_dirname
 
-
-
-    site_root = get_site_root(url)
+    l.info(f"saving to {output_dir}")
 
     response = get_response(url)
+
     data = {
-        'html': response.content,
-        'assets': download_assets(site_root,
-                                  response.content,
-                                  assets_dirname)
+        'html': alter_assets_pathes(response.content),
+        'assets': extract_assets_info(response.content)
     }
 
-    data['html'] = alter_img_src(data['html'],
-                                 data['assets'])
-
-    output = Path(output).resolve()
-    filepath = output / filename
+    with open(path_to_file, 'w') as f:
+        l.info(f'html file save to {path_to_file}')
+        f.write(data['html'])
 
 
-    with open(filepath, 'wb') as f:
-        f.write(data)
-
-
-###################
-    if assets.Count() > 0:
-        and not Path(CURRENT_DIR / assets_dirname).exists()
-        CreateDIR()
-
+    if len(data['assets']) > 0:
+            if not Path(path_to_assets).exists():
+                l.info(f'Creating new assets dir at {path_to_assets}')
+        Path(path_to_assets).mkdir()
 
     return f"The target url data has been successfully saved to " \
-           f"{filepath}"
+           f"{output_dir}"
