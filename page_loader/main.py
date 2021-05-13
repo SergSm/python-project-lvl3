@@ -1,4 +1,4 @@
-# TODO raise error if the output dir doesn't exist
+import logging as l
 
 from pathlib import Path
 
@@ -16,8 +16,14 @@ def get_assets_dirname(filename):
 
 def download(url, output=CURRENT_DIR):
 
+    l.info(f"Destination url{url}")
+
     filename = get_transformed_filename(url)
     assets_dirname = get_assets_dirname(filename)
+
+
+
+
     site_root = get_site_root(url)
 
     response = get_response(url)
@@ -34,7 +40,16 @@ def download(url, output=CURRENT_DIR):
     output = Path(output).resolve()
     filepath = output / filename
 
+
     with open(filepath, 'wb') as f:
         f.write(data)
 
-    return filepath
+
+###################
+    if assets.Count() > 0:
+        and not Path(CURRENT_DIR / assets_dirname).exists()
+        CreateDIR()
+
+
+    return f"The target url data has been successfully saved to " \
+           f"{filepath}"

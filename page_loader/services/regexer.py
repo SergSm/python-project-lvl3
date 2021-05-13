@@ -1,4 +1,4 @@
-"""Module to clean up file names using re"""
+"""Module to clean up file names using re module"""
 
 import re
 

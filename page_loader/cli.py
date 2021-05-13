@@ -11,7 +11,7 @@ def get_arguments():
     parser.add_argument(
         '-o',
         '--output',
-        help="local path to save the downloaded data",
+        help="local directory to save the downloaded data",
         default=os.getcwd(),
     )
 

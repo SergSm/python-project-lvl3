@@ -4,7 +4,7 @@ from tempfile import TemporaryDirectory
 from pathlib import Path
 
 from page_loader import download
-from page_loader.regexer import get_transformed_filename
+from page_loader.services.regexer import get_transformed_filename
 
 
 WORKING_DIR = Path(__file__).resolve().parent
