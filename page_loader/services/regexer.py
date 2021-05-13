@@ -1,29 +1,26 @@
 """Module to clean up file names using re module"""
 
 import re
-
-
-def get_site_root(url):
-
-    #  IN: https://sergsm.github.io/index.html
-    # or
-    #  IN: http://sergsm.github.io/index.html
-    # or
-    # https://sergsm.github.io
-    #  OUT: https://sergsm.github.io/
-    pattern = r"(https?:\/\/.*\/)|(https?:\/\/.*)"
-
-    return re.search(pattern, url).group(0)
+from urllib.parse import urlparse
+from pathlib import PurePath
 
 
 def get_transformed_filename(url):
-    url_no_scheme = str(url).split('//', 1)[-1]
 
-    pattern = r"\W"  # not a Word
-    result = re.sub(pattern, "-", url_no_scheme)
+    handled_url = urlparse(url)
 
-    ends_wth_html = r"\b-html"
-    result = re.sub(ends_wth_html, u".html", result, 0, re.MULTILINE)
+    relative_url = handled_url.path
+
+    url_no_ext = PurePath(relative_url).stem
+    suffix = PurePath(relative_url).suffix
+
+    format_ = suffix if suffix else '.html'
+
+    no_slashes_path = re.sub(r'^[a-zA-Z0-9_]*$',
+                      '-',
+                      handled_url.netloc + url_no_ext)
+
+    result = re.sub(r'^-', '', no_slashes_path) + format_
 
     return result
 
