@@ -2,7 +2,7 @@
 
 import re
 from urllib.parse import urlparse
-from pathlib import PurePath
+from pathlib import Path
 
 
 def get_transformed_filename(url):
@@ -11,12 +11,13 @@ def get_transformed_filename(url):
 
     relative_url = handled_url.path
 
-    url_no_ext = PurePath(relative_url).stem
-    suffix = PurePath(relative_url).suffix
+    suffix = Path(relative_url).suffix
+
+    url_no_ext = Path(relative_url).resolve().stem
 
     format_ = suffix if suffix else '.html'
 
-    no_slashes_path = re.sub(r'^[a-zA-Z0-9_]*$',
+    no_slashes_path = re.sub(r'[^0-9a-zA-Z]+',
                       '-',
                       handled_url.netloc + url_no_ext)
 

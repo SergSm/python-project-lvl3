@@ -3,7 +3,7 @@ import logging as l
 
 from pathlib import Path
 
-from page_loader.services.regexer import get_transformed_filename, get_site_root
+from page_loader.services.names import get_transformed_filename
 from page_loader.services.requester import get_response
 from page_loader.services.html_handler import get_and_alter_assets_pathes, \
     download_assets
@@ -26,7 +26,6 @@ def download(url, output_dir=CURRENT_DIR):
 
     # set up file names and directories pathes
     output_dir = Path(output_dir).resolve()
-
     filename = get_transformed_filename(url)
     assets_dirname = get_assets_dirname(filename)
 
@@ -39,7 +38,7 @@ def download(url, output_dir=CURRENT_DIR):
 
     html, assets = get_and_alter_assets_pathes(response.content,
                                                url,
-                                               path_to_assets),
+                                               path_to_assets)
 
     with open(path_to_file, 'w') as f:
         l.info(f'html file save to {path_to_file}')
@@ -50,7 +49,7 @@ def download(url, output_dir=CURRENT_DIR):
             l.info(f'Creating new assets dir at {path_to_assets}')
             Path(path_to_assets).mkdir()
 
-        download_assets(assets)
+        download_assets(assets, path_to_assets)
 
     return f"The target url data has been successfully saved to " \
            f"{output_dir}"

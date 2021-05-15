@@ -1,10 +1,11 @@
-
 import requests
+
 from pathlib import Path
 from bs4 import BeautifulSoup as bs
-from page_loader.services.regexer import get_transformed_path, \
+from page_loader.services.names import get_transformed_path, \
     get_transformed_filename
 from urllib.parse import urlparse, urljoin
+from progress.bar import Bar
 
 
 TAGS_ATTRIBUTES_MAP = {
@@ -12,6 +13,8 @@ TAGS_ATTRIBUTES_MAP = {
     'script': 'src',
     'link': 'href'
 }
+
+ASSET_CHUNK_SIZE = 128
 
 
 def alter_path(path_to_assets, url_to_alter):
@@ -23,10 +26,9 @@ def get_and_alter_assets_pathes(html, url, path_to_assets):
     souped_page = bs(html, 'html.parser')
     assets = []
 
-    # collect required tags from html
-    tags = []
-    for tag_type in TAGS_ATTRIBUTES_MAP.keys():
-        tags.append(souped_page(tag_type))
+    tags = [*souped_page('script'),
+            *souped_page('link'),
+            *souped_page('img')]
 
     for tag in tags:
         url_to_alter = tag.get(TAGS_ATTRIBUTES_MAP[tag.name])
@@ -37,14 +39,14 @@ def get_and_alter_assets_pathes(html, url, path_to_assets):
         asset_url = urljoin(f'{url}/', url_to_alter)
 
         # check if the asset is internal and belong to the site
-        if urlparse(asset_url).netloc != urlparse(url):
+        if urlparse(asset_url).netloc != urlparse(url).netloc:
             continue
 
         asset_file_name = get_transformed_filename(asset_url)
 
         assets.append({
-            'url_before_change': asset_url,
-            'asset_filename': asset_file_name,
+            'url': asset_url,
+            'filename': asset_file_name,
         })
 
         tag[TAGS_ATTRIBUTES_MAP[tag.name]] = Path(path_to_assets) / asset_file_name
@@ -52,27 +54,22 @@ def get_and_alter_assets_pathes(html, url, path_to_assets):
     return souped_page.prettify(formatter='html5'), assets
 
 
-def download_assets(site_root, html_content, assets_dirname):
+def download_assets(assets, path_to_assets):
     """Download all the assets in a  *_filesfolder
     returns a list of filenames"""
 
-    assets_dirname = Path(assets_dirname).resolve()
+    for asset in assets:
+        response = requests.get(asset['url'], stream=True)
 
-    soup = bs(html_content, 'html.parser')
-    tag = 'img'
+        full_local_path = Path(path_to_assets) / asset['filename']
+        with open(full_local_path, 'wb') as f:
+            content_length = int(response.headers.
+                                 get('content-length', '0'))
 
-    imgs_tags = soup.find_all(tag)
-    urls = [img['src'] for img in imgs_tags]
+            chunks_amount = (content_length / ASSET_CHUNK_SIZE) + 1
 
-    for url in urls:
-        filename = get_transformed_path(url[1:])
-
-        data = requests.get(f'{site_root}{url[1:]}')
-        with open(assets_dirname / filename, 'wb') as f:
-            f.write(data)
-
-
-def alter_img_src(html):
-    # TODO """Changes pathes to images to local"""
-
-    return html   # TODO remove stub
+            with Bar(full_local_path, max=chunks_amount) as progress:
+                for chunk in response.\
+                        iter_lines(chunk_size=ASSET_CHUNK_SIZE):
+                    full_local_path.write(chunk)
+                    progress.next()
