@@ -3,11 +3,11 @@ import logging as l
 
 from pathlib import Path
 
-from page_loader.services.names import get_transformed_filename
+from page_loader.services.names import get_transformed_filename, get_transformed_path
 from page_loader.services.requester import get_response
 from page_loader.services.html_handler import get_and_alter_assets_pathes, \
     download_assets
-from page_loader.services.html_handler import alter_img_src
+
 
 CURRENT_DIR = Path.cwd()
 
@@ -27,7 +27,7 @@ def download(url, output_dir=CURRENT_DIR):
     # set up file names and directories pathes
     output_dir = Path(output_dir).resolve()
     filename = get_transformed_filename(url)
-    assets_dirname = get_assets_dirname(filename)
+    assets_dirname = get_transformed_path(url)
 
     path_to_file = output_dir / filename
     path_to_assets = output_dir / assets_dirname

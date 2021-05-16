@@ -14,3 +14,5 @@ coverage.xml
 debug_main_function.py
 
 .html
+
+playaround/*

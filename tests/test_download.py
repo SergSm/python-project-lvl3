@@ -1,4 +1,4 @@
-# TODO fs check if the dir exists
+import pytest
 
 from tempfile import TemporaryDirectory
 from pathlib import Path
@@ -18,7 +18,7 @@ def get_file(path_to_file):
 
 
 def test_download_single_page():
-    url = "https://sergsm.github.io/index.html"
+    url = "https://sergsm.github.io"
 
     with TemporaryDirectory() as td:
 
@@ -32,7 +32,7 @@ def test_download_single_page():
 
 
 def test_download_single_page_request_mocked(requests_mock):
-    url = "https://sergsm.github.io/index.html"
+    url = "https://sergsm.github.io/"
 
     with TemporaryDirectory() as td:
 

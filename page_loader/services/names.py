@@ -4,22 +4,23 @@ import re
 from urllib.parse import urlparse
 from pathlib import Path
 
+PATTERN_ALPHA_NUMERIC = r'[^0-9a-zA-Z]+'
+
 
 def get_transformed_filename(url):
 
     handled_url = urlparse(url)
 
     relative_url = handled_url.path
-
     suffix = Path(relative_url).suffix
 
-    url_no_ext = Path(relative_url).resolve().stem
+    url_no_ext = str(Path(relative_url).resolve())[:-len(suffix)] \
+        if relative_url else ''
 
     format_ = suffix if suffix else '.html'
-
-    no_slashes_path = re.sub(r'[^0-9a-zA-Z]+',
-                      '-',
-                      handled_url.netloc + url_no_ext)
+    no_slashes_path = re.sub(PATTERN_ALPHA_NUMERIC,
+                             '-',
+                             handled_url.netloc + url_no_ext)
 
     result = re.sub(r'^-', '', no_slashes_path) + format_
 
@@ -27,9 +28,17 @@ def get_transformed_filename(url):
 
 
 def get_transformed_path(url):
+    handled_url = urlparse(url)
 
-    pattern = r"([\w_-]+[.]jpg)"
+    relative_url = handled_url.path
+    suffix = Path(relative_url).suffix
+    url_no_ext = str(Path(relative_url).resolve())[:-len(suffix)] \
+        if relative_url else ''
 
-    result = re.sub()
+    no_slashes_path = re.sub(PATTERN_ALPHA_NUMERIC,
+                             '-',
+                             handled_url.netloc + url_no_ext)
 
-    return re.search(pattern, url).group(0)
+    no_slashes_path += '_files'
+
+    return no_slashes_path

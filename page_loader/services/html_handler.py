@@ -2,8 +2,7 @@ import requests
 
 from pathlib import Path
 from bs4 import BeautifulSoup as bs
-from page_loader.services.names import get_transformed_path, \
-    get_transformed_filename
+from page_loader.services.names import get_transformed_filename
 from urllib.parse import urlparse, urljoin
 from progress.bar import Bar
 
@@ -61,15 +60,15 @@ def download_assets(assets, path_to_assets):
     for asset in assets:
         response = requests.get(asset['url'], stream=True)
 
-        full_local_path = Path(path_to_assets) / asset['filename']
+        full_local_path = str(Path(path_to_assets) / asset['filename'])
         with open(full_local_path, 'wb') as f:
             content_length = int(response.headers.
                                  get('content-length', '0'))
 
             chunks_amount = (content_length / ASSET_CHUNK_SIZE) + 1
 
-            with Bar(full_local_path, max=chunks_amount) as progress:
+            with Bar(full_local_path, max=chunks_amount) as progress_bar:
                 for chunk in response.\
                         iter_lines(chunk_size=ASSET_CHUNK_SIZE):
-                    full_local_path.write(chunk)
-                    progress.next()
+                    f.write(chunk)
+                    progress_bar.next()
